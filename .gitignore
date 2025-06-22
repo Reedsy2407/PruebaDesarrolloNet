@@ -1,0 +1,41 @@
+# Build Folders
+bin/
+obj/
+
+# VS/Solutions user-specific files
+*.suo
+*.user
+*.userprefs
+*.vs/
+
+# MonoDevelop
+*.pidb
+*.userprefs
+
+# Rider
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# Build logs
+*.log
+
+# DotCover
+*.dcvr
+
+# NuGet
+*.nupkg
+# The packages folder can be ignored because of Package Restore
+**/[Pp]ackages/*
+# except build/, which is used as an MSBuild target.
+!**/[Pp]ackages/build/
+# Uncomment if necessary however generally it will be regenerated when needed
+# !**/[Pp]ackages/repositories.config
+
+# Microsoft Azure Web App publish settings
+*.Publish.xml
+
+# DotNet CLI
+project.lock.json
+project.fragment.lock.json
