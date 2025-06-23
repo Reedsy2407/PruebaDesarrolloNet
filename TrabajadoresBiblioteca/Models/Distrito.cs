@@ -10,6 +10,6 @@ namespace TrabajadoresBiblioteca.Models
     {
         public int Id { get; set; }
         public int IdProvincia { get; set; }
-        public string NombreDistrito { get; set; }
+        public string? NombreDistrito { get; set; }
     }
 }

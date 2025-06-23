@@ -1,0 +1,77 @@
+﻿@model TrabajadoresBiblioteca.Models.Trabajador
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        @((Model.Id == 0) ? "Crear Trabajador" : "Editar Trabajador")
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<form method="post" action="@Url.Action((Model.Id == 0 ? "Crear" : "Editar"))">
+    <div class="modal-body">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="TipoDocumento" class="form-label">Tipo Documento</label>
+            <select asp-for="TipoDocumento" class="form-select">
+                <option value="">--Seleccione--</option>
+                <option value="DNI">DNI</option>
+                <option value="PAS">Pasaporte</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="NumeroDocumento" class="form-label">Número Documento</label>
+            <input asp-for="NumeroDocumento" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Nombres" class="form-label">Nombres</label>
+            <input asp-for="Nombres" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Sexo</label><br />
+            <input type="radio" asp-for="Sexo" value="M" /> Masculino
+            <input type="radio" asp-for="Sexo" value="F" /> Femenino
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdDepartamento" class="form-label">Departamento</label>
+            <select asp-for="IdDepartamento" class="form-select" id="IdDepartamento">
+                <option value="">--Seleccione--</option>
+                @foreach (var d in ViewBag.Departamentos)
+                {
+                    <option value="@d.Id">@d.NombreDepartamento</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdProvincia" class="form-label">Provincia</label>
+            <select asp-for="IdProvincia" class="form-select" id="IdProvincia">
+                <option value="">--Seleccione--</option>
+                @foreach (var p in ViewBag.Provincias)
+                {
+                    <option value="@p.Id">@p.NombreProvincia</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="IdDistrito" class="form-label">Distrito</label>
+            <select asp-for="IdDistrito" class="form-select" id="IdDistrito">
+                <option value="">--Seleccione--</option>
+                @foreach (var di in ViewBag.Distritos)
+                {
+                    <option value="@di.Id">@di.NombreDistrito</option>
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="submit" class="btn btn-success">Guardar</button>
+    </div>
+</form>

@@ -1,16 +1,36 @@
+using Microsoft.EntityFrameworkCore;
+using TrabajadoresBiblioteca.Data;
+using TrabajadoresBiblioteca.Interfaces;
+using TrabajadoresBiblioteca.Repositories;
+using TrabajadoresBiblioteca.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+//  DbContext
+builder.Services.AddDbContext<TrabajadoresDbContext>(opt =>
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("cn")));
+
+// repositorios y servicios
+builder.Services.AddScoped<ITrabajadorRepository, TrabajadorRepository>();
+builder.Services.AddScoped<TrabajadorService>();
+
+//  añadir mvc
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware
+
 if (!app.Environment.IsDevelopment())
 {
+    // manda a pagina de error
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    // para detalles de excepcion
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
@@ -20,8 +40,9 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+//  Mapear rutas MVC
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Trabajadores}/{action=Index}/{id?}");
 
 app.Run();

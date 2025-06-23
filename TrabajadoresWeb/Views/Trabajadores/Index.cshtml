@@ -1,0 +1,144 @@
+﻿@model List<TrabajadoresBiblioteca.Models.TrabajadorListado>
+@{
+    ViewData["Title"] = "Listado de Trabajadores";
+}
+
+<div class="container mt-4">
+    <button id="btnNuevo" class="btn btn-primary mb-3">Nuevo Registro</button>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tipo Doc</th>
+                <th>Nro Doc</th>
+                <th>Nombres</th>
+                <th>Sexo</th>
+                <th>Departamento</th>
+                <th>Provincia</th>
+                <th>Distrito</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody id="tblBody">
+            @foreach (var t in Model)
+            {
+                var cls = t.Sexo == 'M' ? "table-primary" : "table-warning";
+                <tr class="@cls" data-id="@t.Id">
+                    <td>@t.TipoDocumento</td>
+                    <td>@t.NumeroDocumento</td>
+                    <td>@t.Nombres</td>
+                    <td>@t.Sexo</td>
+                    <td>@t.NombreDepartamento</td>
+                    <td>@t.NombreProvincia</td>
+                    <td>@t.NombreDistrito</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning btnEditar">Editar</button>
+                        <button class="btn btn-sm btn-danger btnEliminar">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalTrabajador" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function(){
+          // Abrir modal Crear
+          $('#btnNuevo').click(() => loadModal('@Url.Action("Crear")'));
+
+          // Editar y Eliminar
+          $('#tblBody')
+            .on('click', '.btnEditar', function(){
+              var id = $(this).closest('tr').data('id');
+              loadModal('@Url.Action("Editar")?id=' + id);
+            })
+            .on('click', '.btnEliminar', function(){
+              var tr = $(this).closest('tr'),
+                  id = tr.data('id');
+              Swal.fire({
+                title: '¿Está seguro?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, eliminar'
+              }).then(res => {
+                if (res.isConfirmed) {
+                  $.post('@Url.Action("Eliminar")', { id: id })
+                    .done(() => tr.remove());
+                }
+              });
+            });
+
+          // cargar el modal
+          function loadModal(url) {
+            $.get(url).done(html => {
+              $('#modalContent').html(html);
+              var modal = new bootstrap.Modal($('#modalTrabajador'));
+              modal.show();
+              bindForm();
+            });
+          }
+
+          // Vincular todos los evento del modal
+          function bindForm() {
+            var container = $('#modalContent');
+
+            // Limpiar handlers para los duplicados
+            container.off('submit', 'form')
+                     .off('change', '#IdDepartamento')
+                     .off('change', '#IdProvincia');
+
+            // submit modal
+            container.on('submit', 'form', function(e){
+              e.preventDefault();
+              var form = $(this);
+              $.ajax({
+                type: form.attr('method'),
+                url: form.attr('action'),
+                data: form.serialize()
+              }).done(() => {
+                // cerrar modal y recargar tabla
+                bootstrap.Modal.getInstance($('#modalTrabajador')).hide();
+                location.reload();
+              });
+            });
+
+            // departamentos → Provincias
+            container.on('change', '#IdDepartamento', function(){
+              var idDep = $(this).val();
+              $.getJSON('@Url.Action("Provincias", "Trabajadores")?idDep=' + idDep, function(data){
+                var selProv = container.find('#IdProvincia')
+                                       .empty()
+                                       .append('<option value="">--Seleccione--</option>');
+                data.forEach(function(p){
+                  selProv.append('<option value="' + p.id + '">' + p.nombreProvincia + '</option>');
+                });
+                // limpiar distritos
+                container.find('#IdDistrito')
+                         .empty()
+                         .append('<option value="">--Seleccione--</option>');
+              });
+            });
+
+            // provincias → Distritos
+            container.on('change', '#IdProvincia', function(){
+              var idProv = $(this).val();
+              $.getJSON('@Url.Action("Distritos", "Trabajadores")?idProv=' + idProv, function(data){
+                var selDist = container.find('#IdDistrito')
+                                       .empty()
+                                       .append('<option value="">--Seleccione--</option>');
+                data.forEach(function(d){
+                  selDist.append('<option value="' + d.id + '">' + d.nombreDistrito + '</option>');
+                });
+              });
+            });
+          }
+        });
+    </script>
+}

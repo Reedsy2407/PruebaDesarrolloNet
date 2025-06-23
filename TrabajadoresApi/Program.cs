@@ -1,46 +1,46 @@
 using Microsoft.EntityFrameworkCore;
-using Trabajadores.Core.Data;
-using Trabajadores.Core.Interfaces;
-using Trabajadores.Core.Repositories;
-using Trabajadores.Core.Services;
+using TrabajadoresBiblioteca.Data;
+using TrabajadoresBiblioteca.Interfaces;
+using TrabajadoresBiblioteca.Repositories;
+using TrabajadoresBiblioteca.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-
-var builder = WebApplication.CreateBuilder(args);
-
-// 1. Cadena de conexión
-var conn = builder.Configuration.GetConnectionString("TrabajadoresPrueba");
+//   DbContext
 builder.Services.AddDbContext<TrabajadoresDbContext>(opt =>
-    opt.UseSqlServer(conn));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("cn")));
 
-// 2. Registrar repos y servicios
+//  repositorios y servicios
 builder.Services.AddScoped<ITrabajadorRepository, TrabajadorRepository>();
 builder.Services.AddScoped<TrabajadorService>();
 
-// 3. MVC
-builder.Services.AddControllersWithViews();
+//  servicios de API y Swagger
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Middleware
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+else
+{
+    // configurar CORS, HTTPS, logs personalizados, etc
+    app.UseExceptionHandler("/error");
+    app.UseHsts();
+}
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
+
 app.UseAuthorization();
 
+// Mapear endpoints de API
 app.MapControllers();
 
 app.Run();
