@@ -22,7 +22,7 @@ namespace TrabajadoresBiblioteca.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Tabla Trabajadores
+            // Tabla Trabaj
             modelBuilder.Entity<Trabajador>(e =>
             {
                 e.ToTable("Trabajadores");
@@ -43,7 +43,7 @@ namespace TrabajadoresBiblioteca.Data
                  .HasForeignKey(t => t.IdDistrito);
             });
 
-            // Lookup tables
+            // tablas combobox
             modelBuilder.Entity<Departamento>()
                 .ToTable("Departamento")
                 .HasKey(d => d.Id);
@@ -54,7 +54,7 @@ namespace TrabajadoresBiblioteca.Data
                 .ToTable("Distrito")
                 .HasKey(d => d.Id);
 
-            // Configurar entidad para SP (sin clave)
+            // Configurar entidad de SP, para que este sin clave
             modelBuilder.Entity<TrabajadorListado>()
                 .HasNoKey()
                 .ToView(null); // no mapea a tabla física

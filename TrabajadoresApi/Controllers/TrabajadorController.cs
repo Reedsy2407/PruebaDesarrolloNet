@@ -31,7 +31,7 @@ namespace TrabajadoresApi.Controllers
         [HttpDelete("{id}")]
         public Task Delete(int id) => service.EliminarAsync(id);
 
-        // Endpoints para lookup
+        // Endpoints para los combobox
         [HttpGet("departamentos")]
         public Task<List<Departamento>> GetDepartamentos() =>
             service.ObtenerDepartamentosAsync();
